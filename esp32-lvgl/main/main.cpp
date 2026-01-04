@@ -19,7 +19,8 @@
 #define LCD_H_RES        172
 #define LCD_V_RES        320
 
-extern "C" const lv_font_t saira_stancil;
+extern "C" const lv_font_t font_marce;
+extern "C" const lv_font_t font_testo;
 
 static lv_obj_t * mainLabel;
 static const char* valori[] = {"N", "1", "2", "3", "4", "5", "6"};
@@ -107,6 +108,49 @@ void drawBrakeBar(lv_obj_t* screen) {
     lv_obj_set_size(bar1, 10, 200);
     lv_bar_set_value(bar1, 0, LV_ANIM_OFF);
     lv_obj_align(bar1, LV_ALIGN_RIGHT_MID, -7, 0);
+}
+
+void drawPaginazione(lv_obj_t* screen) {
+    for (int i = 0; i < 4; i++) {
+        lv_obj_t * pageIndicator = lv_obj_create(screen);
+        lv_obj_set_size(pageIndicator, 12, 12);
+
+        int xOffset = 50 + (i * (8 + 12));
+        lv_obj_align(pageIndicator, LV_ALIGN_BOTTOM_LEFT, xOffset, -(4));
+        lv_obj_set_style_radius(pageIndicator, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_opa(pageIndicator, LV_OPA_COVER, 0);
+        lv_obj_set_style_border_width(pageIndicator, 0, 0);
+        lv_obj_set_style_bg_color(pageIndicator, (i == 0 ) ? lv_color_white() : lv_palette_main(LV_PALETTE_GREY), 0);
+        lv_obj_set_scrollbar_mode(pageIndicator, LV_SCROLLBAR_MODE_OFF);
+    }
+}
+
+void drawActionSection(lv_obj_t* screen) {
+    lv_obj_t *label = lv_label_create(screen);
+    lv_obj_set_style_text_color(label, lv_color_white(), 0);
+    lv_obj_set_style_text_font(label, &font_testo, 0);
+    lv_label_set_text(label, "REC");
+    lv_obj_align(label, LV_ALIGN_BOTTOM_MID, 0, -40);
+
+    static lv_style_t style_bg;
+    static lv_style_t style_indic;
+
+    lv_style_init(&style_bg);
+    lv_style_set_border_color(&style_bg, lv_color_white());
+    lv_style_set_border_width(&style_bg, 2);
+    lv_style_set_radius(&style_bg, 16);
+
+    lv_style_init(&style_indic);
+    lv_style_set_bg_opa(&style_indic, LV_OPA_COVER);
+    lv_style_set_bg_color(&style_indic, lv_color_white());
+    lv_style_set_radius(&style_indic, 0);
+
+    lv_obj_t * actionBar = lv_bar_create(screen);
+    lv_obj_add_style(actionBar, &style_bg, 0);
+    lv_obj_add_style(actionBar, &style_indic, LV_PART_INDICATOR);
+    lv_obj_set_size(actionBar, 100, 10);
+    lv_bar_set_value(actionBar, 0, LV_ANIM_OFF);
+    lv_obj_align(actionBar, LV_ALIGN_BOTTOM_MID, 0, -28);
 }
 
 extern "C" void app_main(void) {
@@ -204,17 +248,23 @@ extern "C" void app_main(void) {
         // Rimuovi le scrollbar che LVGL aggiunge di default agli oggetti
         lv_obj_set_scrollbar_mode(redCircle, LV_SCROLLBAR_MODE_OFF);
 
-        // lv_obj_t *label = lv_label_create(lv_screen_active());
-        // lv_obj_set_style_text_color(label, lv_color_make(255, 255, 0), 0);
-        // lv_obj_set_style_text_font(label, &saira_stancil, 0);
-        // lv_label_set_text(label, "N");
-        // lv_obj_center(label);
+        lv_obj_t *label = lv_label_create(lv_screen_active());
+        lv_obj_set_style_text_color(label, lv_color_white(), 0);
+        lv_obj_set_style_text_font(label, &font_testo, 0);
+        lv_label_set_text(label, "REC");
+        lv_obj_align(label, LV_ALIGN_TOP_LEFT, 32, 12);
+
+        lv_obj_t *canStatus = lv_label_create(lv_screen_active());
+        lv_obj_set_style_text_color(canStatus, lv_color_make(52, 199, 89), 0);
+        lv_obj_set_style_text_font(canStatus, &font_testo, 0);
+        lv_label_set_text(canStatus, "CAN");
+        lv_obj_align(canStatus, LV_ALIGN_TOP_RIGHT, -8, 12);
 
         mainLabel = lv_label_create(lv_screen_active());
         lv_label_set_text(mainLabel, valori[0]); // Parte da "N"
         
         // Usa il tuo font Google (assicurati di aver esportato "N123456")
-        lv_obj_set_style_text_font(mainLabel, &saira_stancil, 0);
+        lv_obj_set_style_text_font(mainLabel, &font_marce, 0);
         lv_obj_set_style_text_color(mainLabel, lv_palette_main(LV_PALETTE_YELLOW), 0);
         lv_obj_center(mainLabel);
 
@@ -223,6 +273,9 @@ extern "C" void app_main(void) {
 
         drawGasBar(lv_screen_active());
         drawBrakeBar(lv_screen_active());
+        drawPaginazione(lv_screen_active());
+        drawActionSection(lv_screen_active());
+
         lvgl_port_unlock();
     }
 }
