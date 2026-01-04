@@ -8,6 +8,7 @@
 #include "esp_lvgl_port.h"
 #include "ui_theme.hpp"
 #include "splash_view.hpp"
+#include "home_view.hpp"
 
 // Definizione GPIO per HSPI (SPI2 su ESP32)
 #define LCD_HOST         SPI2_HOST
@@ -22,136 +23,46 @@
 #define LCD_V_RES        320
 
 
-static lv_obj_t * mainLabel;
-static const char* valori[] = {"N", "1", "2", "3", "4", "5", "6"};
-static int indiceValore = 0;
+// static lv_obj_t * mainLabel;
+// static const char* valori[] = {"N", "1", "2", "3", "4", "5", "6"};
+// static int indiceValore = 0;
 
-/*
-// Callback per il lampeggio: alterna giallo e bianco basandosi sul valore dell'animazione
-static void animColorCb(void * var, int32_t v) {
-    lv_obj_t * obj = (lv_obj_t *)var;
-    // Se v è pari (0, 2, 4...) -> Giallo, se dispari (1, 3, 5...) -> Bianco
-    if (v % 2 == 0) {
-        lv_obj_set_style_text_color(obj, lv_palette_main(LV_PALETTE_YELLOW), 0);
-    } else {
-        lv_obj_set_style_text_color(obj, lv_color_white(), 0);
-    }
-}
 
-// Funzione chiamata ogni 5 secondi
-static void updateLabelTimerCb(lv_timer_t * timer) {
-    // 1. Aggiorna il valore della label
-    indiceValore = (indiceValore + 1) % 7; // Cicla tra 0 e 6
-    lv_label_set_text(mainLabel, valori[indiceValore]);
+// // Callback per il lampeggio: alterna giallo e bianco basandosi sul valore dell'animazione
+// static void animColorCb(void * var, int32_t v) {
+//     lv_obj_t * obj = (lv_obj_t *)var;
+//     // Se v è pari (0, 2, 4...) -> Giallo, se dispari (1, 3, 5...) -> Bianco
+//     if (v % 2 == 0) {
+//         lv_obj_set_style_text_color(obj, lv_palette_main(LV_PALETTE_YELLOW), 0);
+//     } else {
+//         lv_obj_set_style_text_color(obj, lv_color_white(), 0);
+//     }
+// }
 
-    // 2. Configura l'animazione di lampeggio (Yellow-White ogni 100ms per 1s)
-    lv_anim_t a;
-    lv_anim_init(&a);
-    lv_anim_set_var(&a, mainLabel);
+// // Funzione chiamata ogni 5 secondi
+// static void updateLabelTimerCb(lv_timer_t * timer) {
+//     // 1. Aggiorna il valore della label
+//     indiceValore = (indiceValore + 1) % 7; // Cicla tra 0 e 6
+//     lv_label_set_text(mainLabel, valori[indiceValore]);
+
+//     // 2. Configura l'animazione di lampeggio (Yellow-White ogni 100ms per 1s)
+//     lv_anim_t a;
+//     lv_anim_init(&a);
+//     lv_anim_set_var(&a, mainLabel);
     
-    // Eseguiamo 10 scatti (100ms * 10 = 1000ms)
-    // I valori passati alla callback andranno da 0 a 10
-    lv_anim_set_values(&a, 0, 10); 
-    lv_anim_set_duration(&a, 1000); // Totale 1 secondo
-    lv_anim_set_exec_cb(&a, animColorCb);
+//     // Eseguiamo 10 scatti (100ms * 10 = 1000ms)
+//     // I valori passati alla callback andranno da 0 a 10
+//     lv_anim_set_values(&a, 0, 10); 
+//     lv_anim_set_duration(&a, 1000); // Totale 1 secondo
+//     lv_anim_set_exec_cb(&a, animColorCb);
     
-    // Al termine, assicuriamoci che torni Giallo fisso
-    lv_anim_set_completed_cb(&a, [](lv_anim_t * anim) {
-        lv_obj_set_style_text_color((lv_obj_t *)anim->var, lv_palette_main(LV_PALETTE_YELLOW), 0);
-    });
+//     // Al termine, assicuriamoci che torni Giallo fisso
+//     lv_anim_set_completed_cb(&a, [](lv_anim_t * anim) {
+//         lv_obj_set_style_text_color((lv_obj_t *)anim->var, lv_palette_main(LV_PALETTE_YELLOW), 0);
+//     });
 
-    lv_anim_start(&a);
-}
-
-void drawGasBar(lv_obj_t* screen) {
-    static lv_style_t style_bg;
-    static lv_style_t style_indic;
-
-    lv_style_init(&style_bg);
-    lv_style_set_border_color(&style_bg, lv_color_make(52, 199, 89));
-    lv_style_set_border_width(&style_bg, 2);
-    lv_style_set_radius(&style_bg, 16);
-    lv_style_set_anim_duration(&style_bg, 1000);
-
-    lv_style_init(&style_indic);
-    lv_style_set_bg_opa(&style_indic, LV_OPA_COVER);
-    lv_style_set_bg_color(&style_indic, lv_color_make(52, 199, 89));
-    lv_style_set_radius(&style_indic, 0);
-
-    lv_obj_t * bar1 = lv_bar_create(screen);
-    lv_obj_add_style(bar1, &style_bg, 0);
-    lv_obj_add_style(bar1, &style_indic, LV_PART_INDICATOR);
-    lv_obj_set_size(bar1, 10, 200);
-    lv_bar_set_value(bar1, 70, LV_ANIM_OFF);
-    lv_obj_align(bar1, LV_ALIGN_LEFT_MID, 7, 0);
-}
-
-void drawBrakeBar(lv_obj_t* screen) {
-    static lv_style_t style_bg;
-    static lv_style_t style_indic;
-
-    lv_style_init(&style_bg);
-    lv_style_set_border_color(&style_bg, lv_color_make(255, 56, 60));
-    lv_style_set_border_width(&style_bg, 2);
-    lv_style_set_radius(&style_bg, 16);
-    lv_style_set_anim_duration(&style_bg, 1000);
-
-    lv_style_init(&style_indic);
-    lv_style_set_bg_opa(&style_indic, LV_OPA_COVER);
-    lv_style_set_bg_color(&style_indic, lv_color_make(255, 56, 60));
-    lv_style_set_radius(&style_indic, 0);
-
-    lv_obj_t * bar1 = lv_bar_create(screen);
-    lv_obj_add_style(bar1, &style_bg, 0);
-    lv_obj_add_style(bar1, &style_indic, LV_PART_INDICATOR);
-    lv_obj_set_size(bar1, 10, 200);
-    lv_bar_set_value(bar1, 0, LV_ANIM_OFF);
-    lv_obj_align(bar1, LV_ALIGN_RIGHT_MID, -7, 0);
-}
-
-void drawPaginazione(lv_obj_t* screen) {
-    for (int i = 0; i < 4; i++) {
-        lv_obj_t * pageIndicator = lv_obj_create(screen);
-        lv_obj_set_size(pageIndicator, 12, 12);
-
-        int xOffset = 50 + (i * (8 + 12));
-        lv_obj_align(pageIndicator, LV_ALIGN_BOTTOM_LEFT, xOffset, -(4));
-        lv_obj_set_style_radius(pageIndicator, LV_RADIUS_CIRCLE, 0);
-        lv_obj_set_style_bg_opa(pageIndicator, LV_OPA_COVER, 0);
-        lv_obj_set_style_border_width(pageIndicator, 0, 0);
-        lv_obj_set_style_bg_color(pageIndicator, (i == 0 ) ? lv_color_white() : lv_palette_main(LV_PALETTE_GREY), 0);
-        lv_obj_set_scrollbar_mode(pageIndicator, LV_SCROLLBAR_MODE_OFF);
-    }
-}
-
-void drawActionSection(lv_obj_t* screen) {
-    lv_obj_t *label = lv_label_create(screen);
-    lv_obj_set_style_text_color(label, lv_color_white(), 0);
-    lv_obj_set_style_text_font(label, &font_testo, 0);
-    lv_label_set_text(label, "REC");
-    lv_obj_align(label, LV_ALIGN_BOTTOM_MID, 0, -40);
-
-    static lv_style_t style_bg;
-    static lv_style_t style_indic;
-
-    lv_style_init(&style_bg);
-    lv_style_set_border_color(&style_bg, lv_color_white());
-    lv_style_set_border_width(&style_bg, 2);
-    lv_style_set_radius(&style_bg, 16);
-
-    lv_style_init(&style_indic);
-    lv_style_set_bg_opa(&style_indic, LV_OPA_COVER);
-    lv_style_set_bg_color(&style_indic, lv_color_white());
-    lv_style_set_radius(&style_indic, 0);
-
-    lv_obj_t * actionBar = lv_bar_create(screen);
-    lv_obj_add_style(actionBar, &style_bg, 0);
-    lv_obj_add_style(actionBar, &style_indic, LV_PART_INDICATOR);
-    lv_obj_set_size(actionBar, 100, 10);
-    lv_bar_set_value(actionBar, 0, LV_ANIM_OFF);
-    lv_obj_align(actionBar, LV_ALIGN_BOTTOM_MID, 0, -28);
-}
-*/
+//     lv_anim_start(&a);
+// }
 
 extern "C" void app_main(void) {
     // 1. Configurazione del Bus SPI
@@ -231,60 +142,11 @@ extern "C" void app_main(void) {
     if (lvgl_port_lock(0)) {
         lv_obj_set_style_bg_color(lv_screen_active(), UiTheme::bgColor, 0);
         
-        SplashView* splashView = new SplashView();
-        splashView->build(lv_screen_active());
+        // SplashView* splashView = new SplashView();
+        // splashView->build(lv_screen_active());
 
-
-        /*
-        lv_obj_t * redCircle = lv_obj_create(lv_screen_active());
-        // 2. Imposta le dimensioni 16x16 px
-        lv_obj_set_size(redCircle, 16, 16);
-
-        // 3. Posizionalo in alto a sinistra (0, 0)
-        // Se noti che è troppo attaccato al bordo, puoi usare un piccolo offset, es. (5, 5)
-        lv_obj_align(redCircle, LV_ALIGN_TOP_LEFT, 12, 12);
-
-        // 4. Trasformalo in un cerchio impostando il raggio al massimo
-        lv_obj_set_style_radius(redCircle, LV_RADIUS_CIRCLE, 0);
-
-        // 5. Rendi il fondo trasparente (per vedere solo il bordo)
-        lv_obj_set_style_bg_opa(redCircle, LV_OPA_TRANSP, 0);
-
-        // 6. Imposta il bordo: spessore 2px e colore rosso
-        lv_obj_set_style_border_width(redCircle, 2, 0);
-        lv_obj_set_style_border_color(redCircle, lv_palette_main(LV_PALETTE_RED), 0);
-        
-        // Rimuovi le scrollbar che LVGL aggiunge di default agli oggetti
-        lv_obj_set_scrollbar_mode(redCircle, LV_SCROLLBAR_MODE_OFF);
-
-        lv_obj_t *label = lv_label_create(lv_screen_active());
-        lv_obj_set_style_text_color(label, lv_color_white(), 0);
-        lv_obj_set_style_text_font(label, &font_testo, 0);
-        lv_label_set_text(label, "REC");
-        lv_obj_align(label, LV_ALIGN_TOP_LEFT, 32, 12);
-
-        lv_obj_t *canStatus = lv_label_create(lv_screen_active());
-        lv_obj_set_style_text_color(canStatus, lv_color_make(52, 199, 89), 0);
-        lv_obj_set_style_text_font(canStatus, &font_testo, 0);
-        lv_label_set_text(canStatus, "CAN");
-        lv_obj_align(canStatus, LV_ALIGN_TOP_RIGHT, -8, 12);
-
-        mainLabel = lv_label_create(lv_screen_active());
-        lv_label_set_text(mainLabel, valori[0]); // Parte da "N"
-        
-        // Usa il tuo font Google (assicurati di aver esportato "N123456")
-        lv_obj_set_style_text_font(mainLabel, &font_marce, 0);
-        lv_obj_set_style_text_color(mainLabel, lv_palette_main(LV_PALETTE_YELLOW), 0);
-        lv_obj_center(mainLabel);
-
-        // Crea il timer principale da 5 secondi (5000ms)
-        lv_timer_create(updateLabelTimerCb, 5000, NULL);
-
-        drawGasBar(lv_screen_active());
-        drawBrakeBar(lv_screen_active());
-        drawPaginazione(lv_screen_active());
-        drawActionSection(lv_screen_active());
-        */
+        HomeView* homeView = new HomeView();
+        homeView->build(lv_screen_active());
 
         lvgl_port_unlock();
     }
