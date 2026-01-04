@@ -7,6 +7,7 @@
 #include "esp_lcd_panel_ops.h"
 #include "esp_lvgl_port.h"
 #include "ui_theme.hpp"
+#include "splash_view.hpp"
 
 // Definizione GPIO per HSPI (SPI2 su ESP32)
 #define LCD_HOST         SPI2_HOST
@@ -230,33 +231,9 @@ extern "C" void app_main(void) {
     if (lvgl_port_lock(0)) {
         lv_obj_set_style_bg_color(lv_screen_active(), UiTheme::bgColor, 0);
         
-        lv_obj_t *labelRed = lv_label_create(lv_screen_active());
-        lv_label_set_text(labelRed, "TANGODEV");
-        lv_obj_set_style_bg_opa(labelRed, LV_OPA_TRANSP, 0);
-        lv_obj_set_style_text_color(labelRed, UiTheme::accentRedColor, 0);
-        lv_obj_set_style_text_font(labelRed, UiTheme::fontH2, 0);
-        lv_obj_align(labelRed, LV_ALIGN_CENTER, 2, -20);
+        SplashView* splashView = new SplashView();
+        splashView->build(lv_screen_active());
 
-        lv_obj_t *labelWhite = lv_label_create(lv_screen_active());
-        lv_label_set_text(labelWhite, "TANGODEV");
-        lv_obj_set_style_bg_opa(labelWhite, LV_OPA_TRANSP, 0);
-        lv_obj_set_style_text_font(labelWhite, UiTheme::fontH2, 0);
-        lv_obj_align(labelWhite, LV_ALIGN_CENTER, 0, -21);
-
-        lv_obj_t *subtitle = lv_label_create(lv_screen_active());
-        lv_label_set_text(subtitle, "DATA\nACQUISITION");
-        lv_obj_align(subtitle, LV_ALIGN_CENTER, 0, 20);
-        lv_obj_set_style_text_align(subtitle, LV_TEXT_ALIGN_CENTER, 0);
-
-        lv_obj_t * spinner = lv_spinner_create(lv_screen_active());
-        lv_obj_set_size(spinner, 30, 30);
-        lv_obj_align(spinner, LV_ALIGN_BOTTOM_MID, 0, -12);
-        lv_spinner_set_anim_params(spinner, 3000, 330);
-        lv_obj_set_style_arc_color(spinner, UiTheme::bgColor, LV_PART_MAIN);
-        lv_obj_set_style_arc_width(spinner, 3, LV_PART_MAIN);
-        lv_obj_set_style_arc_color(spinner, UiTheme::textColor, LV_PART_INDICATOR);
-        lv_obj_set_style_arc_width(spinner, 3, LV_PART_INDICATOR);
-        lv_obj_set_style_arc_rounded(spinner, true, LV_PART_INDICATOR);
 
         /*
         lv_obj_t * redCircle = lv_obj_create(lv_screen_active());
