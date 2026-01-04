@@ -22,48 +22,6 @@
 #define LCD_H_RES        172
 #define LCD_V_RES        320
 
-
-// static lv_obj_t * mainLabel;
-// static const char* valori[] = {"N", "1", "2", "3", "4", "5", "6"};
-// static int indiceValore = 0;
-
-
-// // Callback per il lampeggio: alterna giallo e bianco basandosi sul valore dell'animazione
-// static void animColorCb(void * var, int32_t v) {
-//     lv_obj_t * obj = (lv_obj_t *)var;
-//     // Se v è pari (0, 2, 4...) -> Giallo, se dispari (1, 3, 5...) -> Bianco
-//     if (v % 2 == 0) {
-//         lv_obj_set_style_text_color(obj, lv_palette_main(LV_PALETTE_YELLOW), 0);
-//     } else {
-//         lv_obj_set_style_text_color(obj, lv_color_white(), 0);
-//     }
-// }
-
-// // Funzione chiamata ogni 5 secondi
-// static void updateLabelTimerCb(lv_timer_t * timer) {
-//     // 1. Aggiorna il valore della label
-//     indiceValore = (indiceValore + 1) % 7; // Cicla tra 0 e 6
-//     lv_label_set_text(mainLabel, valori[indiceValore]);
-
-//     // 2. Configura l'animazione di lampeggio (Yellow-White ogni 100ms per 1s)
-//     lv_anim_t a;
-//     lv_anim_init(&a);
-//     lv_anim_set_var(&a, mainLabel);
-    
-//     // Eseguiamo 10 scatti (100ms * 10 = 1000ms)
-//     // I valori passati alla callback andranno da 0 a 10
-//     lv_anim_set_values(&a, 0, 10); 
-//     lv_anim_set_duration(&a, 1000); // Totale 1 secondo
-//     lv_anim_set_exec_cb(&a, animColorCb);
-    
-//     // Al termine, assicuriamoci che torni Giallo fisso
-//     lv_anim_set_completed_cb(&a, [](lv_anim_t * anim) {
-//         lv_obj_set_style_text_color((lv_obj_t *)anim->var, lv_palette_main(LV_PALETTE_YELLOW), 0);
-//     });
-
-//     lv_anim_start(&a);
-// }
-
 extern "C" void app_main(void) {
     // 1. Configurazione del Bus SPI
     spi_bus_config_t buscfg = {};
@@ -139,15 +97,29 @@ extern "C" void app_main(void) {
 
     // 5. Creazione della UI "Hello World"
     // lvgl_port_lock garantisce che l'operazione sia thread-safe
+    HomeView* homeView = new HomeView();
     if (lvgl_port_lock(0)) {
         lv_obj_set_style_bg_color(lv_screen_active(), UiTheme::bgColor, 0);
         
         // SplashView* splashView = new SplashView();
         // splashView->build(lv_screen_active());
 
-        HomeView* homeView = new HomeView();
+        
         homeView->build(lv_screen_active());
 
+        // for (uint8_t i = 0; i < 7; i++) {
+        //     vTaskDelay(1000);
+        //     homeView->setGear(i);
+        // }
+        // vTaskDelay(1000);
+        
+        lvgl_port_unlock();
+    }
+
+    for (uint8_t i = 0; i < 7; i++) {
+        vTaskDelay(1000);
+        lvgl_port_lock(0);
+        homeView->setGear(i);
         lvgl_port_unlock();
     }
 }

@@ -7,6 +7,7 @@ public:
     void build(lv_obj_t* parent);
     void destroy();
 
+    void setGear(uint8_t gear);
 private:
     lv_obj_t* _container = nullptr;
     lv_obj_t* _recordStatusIcon = nullptr;

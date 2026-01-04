@@ -77,6 +77,29 @@ void HomeView::_buildActionSection(lv_obj_t* parent) {
     lv_obj_align(actionBar, LV_ALIGN_BOTTOM_MID, 0, -28);
 }
 
+void HomeView::setGear(uint8_t gear) {
+    lv_label_set_text(_gearIndicator, _gears[gear]);
+
+    lv_anim_t animation;
+    lv_anim_init(&animation);
+    lv_anim_set_var(&animation, _gearIndicator);
+    
+    lv_anim_set_values(&animation, 0, 10);
+    lv_anim_set_duration(&animation, 1000);
+    lv_anim_set_exec_cb(&animation, [](void* var, int32_t v) {
+        lv_obj_t * obj = (lv_obj_t *)var;
+        lv_color_t color = (v % 2 == 0) ? UiTheme::accentYellowColor : UiTheme::textColor;
+        lv_obj_set_style_text_color(obj, color, 0);
+    });
+    
+    // Forza il colore Giallo a fine animazione
+    lv_anim_set_completed_cb(&animation, [](lv_anim_t * anim) {
+        lv_obj_set_style_text_color((lv_obj_t *)anim->var, UiTheme::accentYellowColor, 0);
+    });
+
+    lv_anim_start(&animation);
+}
+
 // Da rifattorizzare in header e footer
 
 void HomeView::_buildStatusBar(lv_obj_t* parent) {
@@ -101,7 +124,7 @@ void HomeView::_buildStatusBar(lv_obj_t* parent) {
 }
 
 void HomeView::_buildPageIndicator(lv_obj_t* parent, int8_t currentPageIndex) {
-    for (int i = 0; i < 4; i++) {
+    for (uint8_t i = 0; i < 4; i++) {
         lv_obj_t * pageIndicator = lv_obj_create(parent);
         lv_obj_set_size(pageIndicator, 12, 12);
 
