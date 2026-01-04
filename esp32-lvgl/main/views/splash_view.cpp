@@ -1,17 +1,17 @@
 #include "splash_view.hpp"
 
 void SplashView::build(lv_obj_t* parent) {
-    container = lv_obj_create(parent);
-    lv_obj_set_size(container, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_style_bg_color(container, UiTheme::bgColor, 0);
-    lv_obj_set_style_border_width(container, 0, 0);
+    _container = lv_obj_create(parent);
+    lv_obj_set_size(_container, LV_PCT(100), LV_PCT(100));
+    lv_obj_set_style_bg_color(_container, UiTheme::bgColor, 0);
+    lv_obj_set_style_border_width(_container, 0, 0);
 
-    buildTitle(parent);
-    buildSubtitle(parent);
-    buildSpinner(parent);
+    _buildTitle(_container);
+    _buildSubtitle(_container);
+    _buildSpinner(_container);
 }
 
-void SplashView::buildTitle(lv_obj_t* parent) {
+void SplashView::_buildTitle(lv_obj_t* parent) {
     lv_color_t colors[] = { UiTheme::accentRedColor, UiTheme::textColor };
     for (int i=0; i<2; i++) {
         lv_obj_t *label = lv_label_create(parent);
@@ -23,14 +23,14 @@ void SplashView::buildTitle(lv_obj_t* parent) {
     }
 }
 
-void SplashView::buildSubtitle(lv_obj_t* parent) {
+void SplashView::_buildSubtitle(lv_obj_t* parent) {
     lv_obj_t *subtitle = lv_label_create(parent);
     lv_label_set_text(subtitle, "DATA\nACQUISITION");
     lv_obj_align(subtitle, LV_ALIGN_CENTER, 0, 20);
     lv_obj_set_style_text_align(subtitle, LV_TEXT_ALIGN_CENTER, 0);
 }
 
-void SplashView::buildSpinner(lv_obj_t* parent) {
+void SplashView::_buildSpinner(lv_obj_t* parent) {
     lv_obj_t * spinner = lv_spinner_create(parent);
     lv_obj_set_size(spinner, 30, 30);
     lv_obj_align(spinner, LV_ALIGN_BOTTOM_MID, 0, -12);
@@ -43,8 +43,8 @@ void SplashView::buildSpinner(lv_obj_t* parent) {
 }
 
 void SplashView::destroy() {
-    if (container != nullptr) {
-        lv_obj_del(container);
-        container = nullptr;
+    if (_container != nullptr) {
+        lv_obj_del(_container);
+        _container = nullptr;
     }
 }
