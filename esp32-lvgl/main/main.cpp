@@ -6,6 +6,7 @@
 #include "esp_lcd_panel_vendor.h" // Qui si trova esp_lcd_new_panel_st7789
 #include "esp_lcd_panel_ops.h"
 #include "esp_lvgl_port.h"
+#include "ui_theme.hpp"
 
 // Definizione GPIO per HSPI (SPI2 su ESP32)
 #define LCD_HOST         SPI2_HOST
@@ -19,13 +20,12 @@
 #define LCD_H_RES        172
 #define LCD_V_RES        320
 
-extern "C" const lv_font_t font_marce;
-extern "C" const lv_font_t font_testo;
 
 static lv_obj_t * mainLabel;
 static const char* valori[] = {"N", "1", "2", "3", "4", "5", "6"};
 static int indiceValore = 0;
 
+/*
 // Callback per il lampeggio: alterna giallo e bianco basandosi sul valore dell'animazione
 static void animColorCb(void * var, int32_t v) {
     lv_obj_t * obj = (lv_obj_t *)var;
@@ -69,7 +69,6 @@ void drawGasBar(lv_obj_t* screen) {
     lv_style_init(&style_bg);
     lv_style_set_border_color(&style_bg, lv_color_make(52, 199, 89));
     lv_style_set_border_width(&style_bg, 2);
-    // lv_style_set_pad_all(&style_bg, 6); /*To make the indicator smaller*/
     lv_style_set_radius(&style_bg, 16);
     lv_style_set_anim_duration(&style_bg, 1000);
 
@@ -93,7 +92,6 @@ void drawBrakeBar(lv_obj_t* screen) {
     lv_style_init(&style_bg);
     lv_style_set_border_color(&style_bg, lv_color_make(255, 56, 60));
     lv_style_set_border_width(&style_bg, 2);
-    // lv_style_set_pad_all(&style_bg, 6); /*To make the indicator smaller*/
     lv_style_set_radius(&style_bg, 16);
     lv_style_set_anim_duration(&style_bg, 1000);
 
@@ -152,6 +150,7 @@ void drawActionSection(lv_obj_t* screen) {
     lv_bar_set_value(actionBar, 0, LV_ANIM_OFF);
     lv_obj_align(actionBar, LV_ALIGN_BOTTOM_MID, 0, -28);
 }
+*/
 
 extern "C" void app_main(void) {
     // 1. Configurazione del Bus SPI
@@ -222,11 +221,34 @@ extern "C" void app_main(void) {
     
     lv_display_t *disp = lvgl_port_add_disp(&disp_cfg);
 
+    // Config. tema default
+    lv_theme_t * th = lv_theme_default_init(disp, UiTheme::textColor, UiTheme::accentYellowColor, true, UiTheme::fontTesto);
+    lv_display_set_theme(disp, th);
+
     // 5. Creazione della UI "Hello World"
     // lvgl_port_lock garantisce che l'operazione sia thread-safe
     if (lvgl_port_lock(0)) {
-        lv_obj_set_style_bg_color(lv_screen_active(), lv_color_make(0, 0, 0), 0);
+        lv_obj_set_style_bg_color(lv_screen_active(), UiTheme::bgColor, 0);
         
+        lv_obj_t *labelRed = lv_label_create(lv_screen_active());
+        lv_label_set_text(labelRed, "TANGODEV");
+        lv_obj_set_style_bg_opa(labelRed, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_text_color(labelRed, UiTheme::accentRedColor, 0);
+        lv_obj_set_style_text_font(labelRed, UiTheme::fontH2, 0);
+        lv_obj_align(labelRed, LV_ALIGN_CENTER, 2, 1);
+
+        lv_obj_t *labelWhite = lv_label_create(lv_screen_active());
+        lv_label_set_text(labelWhite, "TANGODEV");
+        lv_obj_set_style_bg_opa(labelWhite, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_text_font(labelWhite, UiTheme::fontH2, 0);
+        lv_obj_center(labelWhite);
+
+        lv_obj_t *subtitle = lv_label_create(lv_screen_active());
+        lv_label_set_text(subtitle, "DATA\nACQUISITION");
+        lv_obj_align(subtitle, LV_ALIGN_BOTTOM_MID, 0, -60);
+        lv_obj_set_style_text_align(subtitle, LV_TEXT_ALIGN_CENTER, 0);
+
+        /*
         lv_obj_t * redCircle = lv_obj_create(lv_screen_active());
         // 2. Imposta le dimensioni 16x16 px
         lv_obj_set_size(redCircle, 16, 16);
@@ -275,6 +297,7 @@ extern "C" void app_main(void) {
         drawBrakeBar(lv_screen_active());
         drawPaginazione(lv_screen_active());
         drawActionSection(lv_screen_active());
+        */
 
         lvgl_port_unlock();
     }
