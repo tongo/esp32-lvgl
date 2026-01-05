@@ -2,6 +2,8 @@
 #include "ui_theme.hpp"
 #include "home_view.hpp"
 #include "info_view.hpp"
+#include "settings_view.hpp"
+#include "shutdown_view.hpp"
 
 MainViewController::~MainViewController() {
     if (_screen) {
@@ -30,16 +32,20 @@ void MainViewController::build() {
     lv_obj_set_style_bg_opa(_contentArea, 0, 0);
     lv_obj_set_style_clip_corner(_contentArea, true, 0);
     lv_obj_set_style_radius(_contentArea, 0, 0);
+    lv_obj_set_scrollbar_mode(_contentArea, LV_SCROLLBAR_MODE_OFF);
 
     _buildFooter();
-
-    this->goToPage(PageIndex::HOME);
+    _currentPageIndex = PageIndex::HOME;
+    this->goToPage(_currentPageIndex);
     
     // Timer per testare il cambio pagina
     lv_timer_create([](lv_timer_t* timer) {
         MainViewController* controller = static_cast<MainViewController*>(lv_timer_get_user_data(timer));
-        controller->goToPage(PageIndex::INFO); // O l'indice della tua seconda View
-        lv_timer_delete(timer); // Eliminiamo il timer dopo il primo colpo
+
+        uint8_t nextPageId = static_cast<int>(controller->_currentPageIndex) + 1;
+        nextPageId = (nextPageId >= 4) ? 0 : nextPageId;
+        PageIndex nextPage = static_cast<PageIndex>(nextPageId);
+        controller->goToPage(nextPage);
     }, 5000, this);
 }
 
@@ -71,14 +77,21 @@ void MainViewController::goToPage(PageIndex index) {
             break;
         }
         case PageIndex::SETTINGS: {
+            SettingsView view;
+            view.build(_contentArea);
+            newPageObj = view.getContainer();
             break;
         }
         case PageIndex::SHUTDOWN: {
+            ShutdownView view;
+            view.build(_contentArea);
+            newPageObj = view.getContainer();
             break;
         }
     }
 
     if (!newPageObj) return;
+    _currentPageIndex = index;
 
     // 2. Setup per l'animazione
     lv_obj_update_layout(_contentArea);

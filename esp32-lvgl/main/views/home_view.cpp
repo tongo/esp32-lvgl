@@ -6,7 +6,6 @@ void HomeView::_buildContent() {
     _buidBrakeIndicator(_container);
 
     _buildActionSection(_container);
-    // _buildPageIndicator(_container, 0);
 }
 
 void HomeView::_buildGearIndicator(lv_obj_t* parent) {
@@ -19,12 +18,12 @@ void HomeView::_buildGearIndicator(lv_obj_t* parent) {
 
 void HomeView::_buidGasIndicator(lv_obj_t* parent) {
     _gasIndicator = _buidVerticalBar(parent, UiTheme::accentGreenColor);
-    lv_obj_align(_gasIndicator, LV_ALIGN_LEFT_MID, 7, 0);
+    lv_obj_align(_gasIndicator, LV_ALIGN_LEFT_MID, 8, 0);
 }
 
 void HomeView::_buidBrakeIndicator(lv_obj_t* parent) {
     _brakeIndicator = _buidVerticalBar(parent, UiTheme::accentRedColor);
-    lv_obj_align(_brakeIndicator, LV_ALIGN_RIGHT_MID, -7, 0);
+    lv_obj_align(_brakeIndicator, LV_ALIGN_RIGHT_MID, -8, 0);
 }
 
 lv_obj_t* HomeView::_buidVerticalBar(lv_obj_t* parent, lv_color_t color) {
