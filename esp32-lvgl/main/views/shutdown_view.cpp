@@ -1,4 +1,5 @@
 #include "shutdown_view.hpp"
+#include "ui_theme.hpp"
 
 void ShutdownView::_buildContent() {
     lv_obj_t *label = lv_label_create(_container);

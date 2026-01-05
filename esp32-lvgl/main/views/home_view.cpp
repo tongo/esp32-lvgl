@@ -4,8 +4,7 @@ void HomeView::_buildContent() {
     _buildGearIndicator(_container);
     _buidGasIndicator(_container);
     _buidBrakeIndicator(_container);
-
-    _buildActionSection(_container);
+    _buildActionSection(_container, "REC");
 }
 
 void HomeView::_buildGearIndicator(lv_obj_t* parent) {
@@ -39,34 +38,6 @@ lv_obj_t* HomeView::_buidVerticalBar(lv_obj_t* parent, lv_color_t color) {
     lv_bar_set_value(bar, 0, LV_ANIM_OFF);
 
     return bar;
-}
-
-// Da fattorizzare in una classe "parent"
-void HomeView::_buildActionSection(lv_obj_t* parent) {
-    lv_obj_t *label = lv_label_create(parent);
-    lv_obj_set_style_text_color(label, UiTheme::textColor, 0);
-    lv_label_set_text(label, "REC");
-    lv_obj_align(label, LV_ALIGN_BOTTOM_MID, 0, -40);
-
-    static lv_style_t style_bg;
-    static lv_style_t style_indic;
-
-    lv_style_init(&style_bg);
-    lv_style_set_border_color(&style_bg, UiTheme::textColor);
-    lv_style_set_border_width(&style_bg, 2);
-    lv_style_set_radius(&style_bg, 16);
-
-    lv_style_init(&style_indic);
-    lv_style_set_bg_opa(&style_indic, LV_OPA_COVER);
-    lv_style_set_bg_color(&style_indic, UiTheme::textColor);
-    lv_style_set_radius(&style_indic, 0);
-
-    lv_obj_t * actionBar = lv_bar_create(parent);
-    lv_obj_add_style(actionBar, &style_bg, 0);
-    lv_obj_add_style(actionBar, &style_indic, LV_PART_INDICATOR);
-    lv_obj_set_size(actionBar, 100, 10);
-    lv_bar_set_value(actionBar, 0, LV_ANIM_OFF);
-    lv_obj_align(actionBar, LV_ALIGN_BOTTOM_MID, 0, -28);
 }
 
 void HomeView::setGear(uint8_t gear) {

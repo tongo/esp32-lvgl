@@ -1,4 +1,5 @@
 #include "info_view.hpp"
+#include "ui_theme.hpp"
 
 void InfoView::_buildContent() {
     lv_obj_set_style_bg_color(_container, UiTheme::accentYellowColor, 0);

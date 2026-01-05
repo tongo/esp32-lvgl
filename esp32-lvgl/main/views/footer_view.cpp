@@ -1,4 +1,5 @@
 #include "footer_view.hpp"
+#include "ui_theme.hpp"
 
 void FooterView::_buildContent() {
     lv_obj_set_size(_container, LV_PCT(100), (CONTAINER_PADDING * 2 + PAGE_INDICATOR_SIZE));

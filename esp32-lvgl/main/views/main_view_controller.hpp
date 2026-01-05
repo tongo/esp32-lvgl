@@ -1,5 +1,6 @@
 #pragma once
 #include "lvgl.h"
+#include "base_view.hpp"
 #include "header_view.hpp"
 #include "footer_view.hpp"
 
@@ -18,6 +19,7 @@ public:
     void build();
     
     void goToPage(PageIndex index);
+    void goToNextPage();
 
     lv_obj_t* getScreen() { return _screen; }
 
@@ -26,11 +28,14 @@ private:
     HeaderView* _header = nullptr;
     FooterView* _footer = nullptr;
     lv_obj_t* _contentArea = nullptr;
-    lv_obj_t* _currentPage = nullptr;
 
     PageIndex _currentPageIndex;
+    BaseView* _currentPage = nullptr;
 
+    uint32_t _pressStartTime = 0;
+
+    void _setupInputDevice();
     void _buildHeader();
     void _buildFooter();
-    void _animateSlide(lv_obj_t* newPage, lv_coord_t width);
+    void _animateSlide(BaseView* newPage, lv_coord_t width);
 };

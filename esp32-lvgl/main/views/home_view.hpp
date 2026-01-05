@@ -20,6 +20,4 @@ private:
     void _buidGasIndicator(lv_obj_t* parent);
     void _buidBrakeIndicator(lv_obj_t* parent);
     lv_obj_t* _buidVerticalBar(lv_obj_t* parent, lv_color_t color);
-
-    void _buildActionSection(lv_obj_t* parent);
 };
