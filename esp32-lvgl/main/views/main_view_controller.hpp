@@ -1,6 +1,7 @@
 #pragma once
 #include "lvgl.h"
 #include "header_view.hpp"
+#include "footer_view.hpp"
 
 enum class PageIndex {
     HOME = 0,
@@ -23,7 +24,7 @@ public:
 private:
     lv_obj_t* _screen = nullptr;
     HeaderView* _header = nullptr;
-    lv_obj_t* _footer = nullptr;
+    FooterView* _footer = nullptr;
     lv_obj_t* _contentArea = nullptr;
     lv_obj_t* _currentPage = nullptr;
 

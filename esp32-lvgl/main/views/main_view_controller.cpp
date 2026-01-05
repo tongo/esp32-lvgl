@@ -49,10 +49,8 @@ void MainViewController::_buildHeader() {
 }
 
 void MainViewController::_buildFooter() {
-    _footer = lv_obj_create(_screen);
-    lv_obj_set_size(_footer, LV_PCT(100), 30);
-    lv_obj_set_style_bg_color(_footer, UiTheme::accentCyanColor, 0);
-    lv_obj_set_style_radius(_footer, 0, 0);
+    _footer = new FooterView();
+    _footer->build(_screen);
 }
 
 void MainViewController::goToPage(PageIndex index) {
@@ -85,6 +83,7 @@ void MainViewController::goToPage(PageIndex index) {
     // 2. Setup per l'animazione
     lv_obj_update_layout(_contentArea);
     lv_coord_t width = lv_obj_get_width(_contentArea);
+    _footer->setActivePage(static_cast<uint8_t>(index));
 
     if (_currentPage == nullptr) {
         // È la prima pagina: niente animazione

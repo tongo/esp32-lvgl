@@ -22,5 +22,4 @@ private:
     lv_obj_t* _buidVerticalBar(lv_obj_t* parent, lv_color_t color);
 
     void _buildActionSection(lv_obj_t* parent);
-    void _buildPageIndicator(lv_obj_t* parent, int8_t currentPageIndex);
 };

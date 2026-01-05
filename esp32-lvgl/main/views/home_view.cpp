@@ -92,21 +92,3 @@ void HomeView::setGear(uint8_t gear) {
 
     lv_anim_start(&animation);
 }
-
-// Da rifattorizzare in header e footer
-
-
-void HomeView::_buildPageIndicator(lv_obj_t* parent, int8_t currentPageIndex) {
-    for (uint8_t i = 0; i < 4; i++) {
-        lv_obj_t * pageIndicator = lv_obj_create(parent);
-        lv_obj_set_size(pageIndicator, 12, 12);
-
-        int xOffset = 50 + (i * (8 + 12));
-        lv_obj_align(pageIndicator, LV_ALIGN_BOTTOM_LEFT, xOffset, -(4));
-        lv_obj_set_style_radius(pageIndicator, LV_RADIUS_CIRCLE, 0);
-        lv_obj_set_style_bg_opa(pageIndicator, LV_OPA_COVER, 0);
-        lv_obj_set_style_border_width(pageIndicator, 0, 0);
-        lv_obj_set_style_bg_color(pageIndicator, (i == currentPageIndex ) ? UiTheme::textColor : UiTheme::disableColor, 0);
-        lv_obj_set_scrollbar_mode(pageIndicator, LV_SCROLLBAR_MODE_OFF);
-    }
-}

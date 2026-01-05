@@ -1,5 +1,6 @@
 #pragma once
 #include "lvgl.h"
+#include "ui_theme.hpp"
 
 class BaseView {
 public:
