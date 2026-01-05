@@ -13,7 +13,7 @@ void SplashView::build() {
 
 void SplashView::_buildTitle(lv_obj_t* parent) {
     lv_color_t colors[] = { UiTheme::accentRedColor, UiTheme::textColor };
-    for (int i=0; i<2; i++) {
+    for (uint8_t i=0; i<2; i++) {
         lv_obj_t *label = lv_label_create(parent);
         lv_label_set_text(label, "TANGODEV");
         lv_obj_set_style_bg_opa(label, LV_OPA_TRANSP, 0);

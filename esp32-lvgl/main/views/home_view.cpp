@@ -1,19 +1,12 @@
 #include "home_view.hpp"
 
-void HomeView::build() {
-    _screen = lv_obj_create(nullptr);
-    lv_obj_set_size(_screen, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_style_bg_color(_screen, UiTheme::bgColor, 0);
-    lv_obj_set_style_border_width(_screen, 0, 0);
-    lv_obj_set_style_pad_all(_screen, 0, 0);
+void HomeView::_buildContent() {
+    _buildGearIndicator(_container);
+    _buidGasIndicator(_container);
+    _buidBrakeIndicator(_container);
 
-    _buildStatusBar(_screen);
-    _buildGearIndicator(_screen);
-    _buidGasIndicator(_screen);
-    _buidBrakeIndicator(_screen);
-
-    _buildActionSection(_screen);
-    _buildPageIndicator(_screen, 0);
+    _buildActionSection(_container);
+    // _buildPageIndicator(_container, 0);
 }
 
 void HomeView::_buildGearIndicator(lv_obj_t* parent) {
@@ -79,7 +72,7 @@ void HomeView::_buildActionSection(lv_obj_t* parent) {
 
 void HomeView::setGear(uint8_t gear) {
     lv_label_set_text(_gearIndicator, _gears[gear]);
-
+    
     lv_anim_t animation;
     lv_anim_init(&animation);
     lv_anim_set_var(&animation, _gearIndicator);
@@ -102,26 +95,6 @@ void HomeView::setGear(uint8_t gear) {
 
 // Da rifattorizzare in header e footer
 
-void HomeView::_buildStatusBar(lv_obj_t* parent) {
-    lv_obj_t * _recordStatusIcon = lv_obj_create(parent);
-    lv_obj_set_size(_recordStatusIcon, 16, 16);
-    lv_obj_align(_recordStatusIcon, LV_ALIGN_TOP_LEFT, 12, 12);
-    lv_obj_set_style_radius(_recordStatusIcon, LV_RADIUS_CIRCLE, 0);
-    lv_obj_set_style_bg_opa(_recordStatusIcon, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_border_width(_recordStatusIcon, 2, 0);
-    lv_obj_set_style_border_color(_recordStatusIcon, UiTheme::accentRedColor, 0);
-    lv_obj_set_scrollbar_mode(_recordStatusIcon, LV_SCROLLBAR_MODE_OFF);
-
-    lv_obj_t *label = lv_label_create(parent);
-    lv_obj_set_style_text_color(label, UiTheme::textColor, 0);
-    lv_label_set_text(label, "REC");
-    lv_obj_align(label, LV_ALIGN_TOP_LEFT, 32, 12);
-
-    lv_obj_t *canStatus = lv_label_create(parent);
-    lv_obj_set_style_text_color(canStatus, UiTheme::accentGreenColor, 0);
-    lv_label_set_text(canStatus, "CAN");
-    lv_obj_align(canStatus, LV_ALIGN_TOP_RIGHT, -8, 12);
-}
 
 void HomeView::_buildPageIndicator(lv_obj_t* parent, int8_t currentPageIndex) {
     for (uint8_t i = 0; i < 4; i++) {
@@ -135,12 +108,5 @@ void HomeView::_buildPageIndicator(lv_obj_t* parent, int8_t currentPageIndex) {
         lv_obj_set_style_border_width(pageIndicator, 0, 0);
         lv_obj_set_style_bg_color(pageIndicator, (i == currentPageIndex ) ? UiTheme::textColor : UiTheme::disableColor, 0);
         lv_obj_set_scrollbar_mode(pageIndicator, LV_SCROLLBAR_MODE_OFF);
-    }
-}
-
-void HomeView::destroy() {
-    if (_screen != nullptr) {
-        lv_obj_del(_screen);
-        _screen = nullptr;
     }
 }
