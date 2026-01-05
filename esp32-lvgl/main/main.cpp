@@ -9,6 +9,7 @@
 #include "ui_theme.hpp"
 #include "splash_view.hpp"
 #include "home_view.hpp"
+#include "ui_manager.hpp"
 
 // Definizione GPIO per HSPI (SPI2 su ESP32)
 #define LCD_HOST         SPI2_HOST
@@ -97,15 +98,18 @@ extern "C" void app_main(void) {
 
     // 5. Creazione della UI "Hello World"
     // lvgl_port_lock garantisce che l'operazione sia thread-safe
-    HomeView* homeView = new HomeView();
+    // HomeView* homeView = new HomeView();
+
+    UiManager& uiManager = UiManager::getInstance();
     if (lvgl_port_lock(0)) {
         lv_obj_set_style_bg_color(lv_screen_active(), UiTheme::bgColor, 0);
         
+        uiManager.start();
         // SplashView* splashView = new SplashView();
         // splashView->build(lv_screen_active());
 
         
-        homeView->build(lv_screen_active());
+        // homeView->build(lv_screen_active());
 
         // for (uint8_t i = 0; i < 7; i++) {
         //     vTaskDelay(1000);
@@ -116,10 +120,10 @@ extern "C" void app_main(void) {
         lvgl_port_unlock();
     }
 
-    for (uint8_t i = 0; i < 7; i++) {
-        vTaskDelay(1000);
-        lvgl_port_lock(0);
-        homeView->setGear(i);
-        lvgl_port_unlock();
-    }
+    // for (uint8_t i = 0; i < 7; i++) {
+    //     vTaskDelay(1000);
+    //     lvgl_port_lock(0);
+    //     homeView->setGear(i);
+    //     lvgl_port_unlock();
+    // }
 }

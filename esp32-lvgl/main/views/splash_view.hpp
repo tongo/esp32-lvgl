@@ -4,11 +4,13 @@
 
 class SplashView {
 public:
-    void build(lv_obj_t* parent);
+    void build();
     void destroy();
 
+    lv_obj_t* getScreen() { return _screen; }
+    
 private:
-    lv_obj_t* _container = nullptr;
+    lv_obj_t* _screen = nullptr;
 
     void _buildTitle(lv_obj_t* parent);
     void _buildSubtitle(lv_obj_t* parent);

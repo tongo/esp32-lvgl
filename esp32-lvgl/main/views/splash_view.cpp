@@ -1,14 +1,14 @@
 #include "splash_view.hpp"
 
-void SplashView::build(lv_obj_t* parent) {
-    _container = lv_obj_create(parent);
-    lv_obj_set_size(_container, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_style_bg_color(_container, UiTheme::bgColor, 0);
-    lv_obj_set_style_border_width(_container, 0, 0);
+void SplashView::build() {
+    _screen = lv_obj_create(nullptr);
+    lv_obj_set_size(_screen, LV_PCT(100), LV_PCT(100));
+    lv_obj_set_style_bg_color(_screen, UiTheme::bgColor, 0);
+    lv_obj_set_style_border_width(_screen, 0, 0);
 
-    _buildTitle(_container);
-    _buildSubtitle(_container);
-    _buildSpinner(_container);
+    _buildTitle(_screen);
+    _buildSubtitle(_screen);
+    _buildSpinner(_screen);
 }
 
 void SplashView::_buildTitle(lv_obj_t* parent) {
@@ -43,8 +43,8 @@ void SplashView::_buildSpinner(lv_obj_t* parent) {
 }
 
 void SplashView::destroy() {
-    if (_container != nullptr) {
-        lv_obj_del(_container);
-        _container = nullptr;
+    if (_screen != nullptr) {
+        lv_obj_del(_screen);
+        _screen = nullptr;
     }
 }

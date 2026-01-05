@@ -1,23 +1,23 @@
 #include "home_view.hpp"
 
-void HomeView::build(lv_obj_t* parent) {
-    _container = lv_obj_create(parent);
-    lv_obj_set_size(_container, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_style_bg_color(_container, UiTheme::bgColor, 0);
-    lv_obj_set_style_border_width(_container, 0, 0);
-    lv_obj_set_style_pad_all(_container, 0, 0);
+void HomeView::build() {
+    _screen = lv_obj_create(nullptr);
+    lv_obj_set_size(_screen, LV_PCT(100), LV_PCT(100));
+    lv_obj_set_style_bg_color(_screen, UiTheme::bgColor, 0);
+    lv_obj_set_style_border_width(_screen, 0, 0);
+    lv_obj_set_style_pad_all(_screen, 0, 0);
 
-    _buildStatusBar(_container);
-    _buildGearIndicator(_container);
-    _buidGasIndicator(_container);
-    _buidBrakeIndicator(_container);
+    _buildStatusBar(_screen);
+    _buildGearIndicator(_screen);
+    _buidGasIndicator(_screen);
+    _buidBrakeIndicator(_screen);
 
-    _buildActionSection(_container);
-    _buildPageIndicator(_container, 0);
+    _buildActionSection(_screen);
+    _buildPageIndicator(_screen, 0);
 }
 
 void HomeView::_buildGearIndicator(lv_obj_t* parent) {
-    _gearIndicator = lv_label_create(lv_screen_active());
+    _gearIndicator = lv_label_create(parent);
     lv_label_set_text(_gearIndicator, _gears[0]);
     lv_obj_set_style_text_font(_gearIndicator, UiTheme::fontMarce, 0);
     lv_obj_set_style_text_color(_gearIndicator, UiTheme::accentYellowColor, 0);
@@ -139,8 +139,8 @@ void HomeView::_buildPageIndicator(lv_obj_t* parent, int8_t currentPageIndex) {
 }
 
 void HomeView::destroy() {
-    if (_container != nullptr) {
-        lv_obj_del(_container);
-        _container = nullptr;
+    if (_screen != nullptr) {
+        lv_obj_del(_screen);
+        _screen = nullptr;
     }
 }

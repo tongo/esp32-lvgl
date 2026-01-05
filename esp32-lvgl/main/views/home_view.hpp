@@ -4,12 +4,14 @@
 
 class HomeView {
 public:
-    void build(lv_obj_t* parent);
+    void build();
     void destroy();
+    
+    lv_obj_t* getScreen() { return _screen; }
 
     void setGear(uint8_t gear);
 private:
-    lv_obj_t* _container = nullptr;
+    lv_obj_t* _screen = nullptr;
     lv_obj_t* _recordStatusIcon = nullptr;
     lv_obj_t* _canStatus = nullptr;
     static inline const char* _gears[] = {"N", "1", "2", "3", "4", "5", "6"};
